@@ -6,23 +6,20 @@ const LS_KEY = 'videoplayer-current-time';
 const playerRef = document.querySelector('#vimeo-player');
 const player = new Player(playerRef);
 
-function setItemLS(data) {
-  localStorage.setItem(LS_KEY, JSON.stringify(data));
+function setItemLS({ seconds }) {
+  localStorage.setItem(LS_KEY, seconds);
 }
 
 player.on('timeupdate', throttle(setItemLS, 1000));
 
-const lsUserTime = JSON.parse(localStorage.getItem(LS_KEY));
+const lsUserTime = localStorage.getItem(LS_KEY) || 0;
 
-player
-  .setCurrentTime(lsUserTime.seconds)
-  //   .then(function (seconds) {})
-  .catch(function (error) {
-    switch (error.name) {
-      case 'RangeError':
-        break;
+player.setCurrentTime(lsUserTime).catch(function (error) {
+  switch (error.name) {
+    case 'RangeError':
+      break;
 
-      default:
-        break;
-    }
-  });
+    default:
+      break;
+  }
+});
